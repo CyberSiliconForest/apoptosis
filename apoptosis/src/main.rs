@@ -6,7 +6,7 @@ mod trail;
 mod types;
 
 #[derive(Subcommand, Clone, Debug)]
-enum Command {
+pub enum Command {
     Convert {
         #[arg(long, help = "Instance type to run Apoptosis on")]
         instance_type: InstanceType,
@@ -26,7 +26,7 @@ enum Command {
     },
 }
 
-#[derive(Parser, Clone, Debug)]
+#[derive(Parser, Clone, Debug)] //
 #[command(author, version, about, long_about = None)]
 struct Args {
     #[command(subcommand)]
@@ -37,9 +37,25 @@ struct Args {
 async fn main() -> anyhow::Result<()> {
     tracing_subscriber::fmt::init();
 
+    let args = Args::parse();
+
     tracing::info!("Apotosis initialized.");
 
-    //
+    match args.command {
+        Command::Convert {
+            instance_type,
+            database_url,
+        } => {
+            trail::applet_main(instance_type, database_url).await?;
+        }
+        Command::Destruct {
+            listen,
+            connection_per_instance,
+            thread_cnt,
+        } => {
+            caspase::applet_main(listen, connection_per_instance, thread_cnt).await?;
+        }
+    }
 
     Ok(())
 }
