@@ -1,3 +1,5 @@
+mod datafetcher;
+
 use crate::types::InstanceType;
 use crate::Command;
 
