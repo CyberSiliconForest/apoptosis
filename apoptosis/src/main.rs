@@ -1,5 +1,7 @@
 use crate::types::InstanceType;
 use clap::{Parser, Subcommand};
+use diesel::prelude::*;
+use diesel_async::{RunQueryDsl, AsyncConnection};
 
 mod caspase;
 mod trail;
