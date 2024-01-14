@@ -14,5 +14,6 @@ sigh = "^1.0.2"
 axum = "^0.7.4"
 clap = { version = "^4.4.16", features = ["derive"] }
 sled = "0.34.7"
-diesel = { version = "2.1.4", features = ["postgres"] }
-diesel-async = "0.4.1"
+diesel = { version = "^2.1.4", features = ["postgres"] }
+diesel-async = { version = "^0.4.1", features = ["bb8", "postgres"] }
+futures-util = "^0.3.30"
