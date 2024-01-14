@@ -6,9 +6,9 @@ SELECT
   accounts.private_key AS private_key
 FROM accounts
 INNER JOIN users ON accounts.id = users.account_id
-WHERE users.disabled IS NOT TRUE;
+WHERE users.disabled IS NOT TRUE
+  AND accounts.suspended_at IS NULL
 ORDER BY accounts.id
 LIMIT ? OFFSET ?;
 """;
 
-//

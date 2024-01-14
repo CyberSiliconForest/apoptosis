@@ -7,6 +7,7 @@ SELECT
 FROM "user"
 INNER JOIN "user_keypair" ON "user_keypair"."userId" = "user".id
 WHERE "user"."isDeleted" IS FALSE
+  AND "user"."isSuspended" IS FALSE
 ORDER BY "user".id
 LIMIT ? OFFSET ?;
 """
