@@ -25,10 +25,10 @@ pub enum Command {
         thread_cnt: i32,
 
         #[arg(
-            long,
+            long = "override-concurrency-limit-i-know-what-is-sif-2023-001",
             help = "Override concurrency limit. DO NOT ENABLE THIS UNLESS YOU KNOW THE CONSQUENCES."
         )]
-        override_concurrency_limit_i_know_what_is_sif_2023_001: bool,
+        override_concurrency_limit: bool,
     },
 }
 
@@ -58,13 +58,13 @@ async fn main() -> anyhow::Result<()> {
             listen,
             connection_per_instance,
             thread_cnt,
-            override_concurrency_limit_i_know_what_is_sif_2023_001,
+            override_concurrency_limit,
         } => {
             caspase::applet_main(
                 listen,
                 connection_per_instance,
                 thread_cnt,
-                override_concurrency_limit_i_know_what_is_sif_2023_001,
+                override_concurrency_limit,
             )
             .await?;
         }

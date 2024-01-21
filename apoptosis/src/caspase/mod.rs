@@ -14,8 +14,12 @@ pub async fn applet_main(
     // Unintentional DoS against Mastodon. ref: https://advisory.silicon.moe/advisory/sif-2023-001/
     // Although apoptosis::caspase will reply 410 as fast as it can, but we are living in the world
     // without FTL communication...
-    if connection_per_instance > CONCURRENCY_SOFT_LIMIT_PER_INSTANCE && !override_concurrency_limit {
-        eprintln!("Refuse to run caspase: connection_per_instance > {}", CONCURRENCY_SOFT_LIMIT_PER_INSTANCE);
+    if connection_per_instance > CONCURRENCY_SOFT_LIMIT_PER_INSTANCE && !override_concurrency_limit
+    {
+        eprintln!(
+            "Refuse to run caspase: connection_per_instance > {}",
+            CONCURRENCY_SOFT_LIMIT_PER_INSTANCE
+        );
         eprintln!("This limitation is in place because Mastodon is refusing to fix SIF-2023-001");
         eprintln!("See: https://advisory.silicon.moe/advisory/sif-2023-001/ for the detailed information.");
 
