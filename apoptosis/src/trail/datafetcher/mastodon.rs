@@ -50,7 +50,7 @@ pub async fn get_active_users(
 ) -> Result<Vec<User>, anyhow::Error> {
     // Properly limit the query...
     let users = accounts::table
-        .inner_join((users::table))
+        .inner_join(users::table)
         .filter(
             users::disabled
                 .eq(false)

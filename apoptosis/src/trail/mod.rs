@@ -53,7 +53,7 @@ pub async fn applet_main(instance_type: InstanceType, database_url: String) -> a
             .await
             .unwrap();
 
-        if active_users.len() == 0 {
+        if active_users.is_empty() {
             break;
         }
 
