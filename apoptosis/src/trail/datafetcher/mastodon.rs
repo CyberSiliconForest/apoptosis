@@ -45,7 +45,7 @@ pub struct MastodonUsers {
 pub async fn get_active_users(
     conn: &mut AsyncPgConnection,
     paginator: &Paginator,
-) -> Result<(), anyhow::Error> {
+) -> Result<Vec<User>, anyhow::Error> {
     // Properly limit the query...
     let users = accounts::table
         .inner_join((users::table))
@@ -71,5 +71,5 @@ pub async fn get_active_users(
 
     // Should I transport it to another object? hmm...
 
-    Ok(())
+    Ok(results)
 }

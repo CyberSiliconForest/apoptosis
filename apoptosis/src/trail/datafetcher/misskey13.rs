@@ -50,7 +50,7 @@ pub struct Misskey13KeyPair {
 pub async fn get_active_users(
     conn: &mut AsyncPgConnection,
     paginator: &Paginator,
-) -> Result<(), anyhow::Error> {
+) -> Result<Vec<User>, anyhow::Error> {
     let users = user::table
         .inner_join(user_keypair::table)
         .filter(user::isDeleted.eq(false))
@@ -69,5 +69,5 @@ pub async fn get_active_users(
         })
         .collect();
 
-    Ok(())
+    Ok(results)
 }
