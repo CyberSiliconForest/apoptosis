@@ -1,4 +1,4 @@
-use crate::trail::datafetcher::{Paginator, User};
+use crate::trail::datafetcher::{Instance, Paginator, User};
 use diesel::prelude::*;
 use diesel_async::{AsyncConnection, AsyncPgConnection, RunQueryDsl};
 
@@ -9,6 +9,9 @@ diesel::table! {
         username -> Text,
         private_key -> Text,
         suspended_at -> Timestamp,
+
+        // For domain query
+        domain -> Nullable<Text>,
     }
 }
 
@@ -69,4 +72,11 @@ pub async fn get_active_users(
         .collect();
 
     Ok(results)
+}
+
+pub async fn get_federated_instances(
+    conn: &mut AsyncPgConnection,
+    paginator: &Paginator,
+) -> Result<Vec<Instance>, anyhow::Error> {
+    Ok(vec![])
 }

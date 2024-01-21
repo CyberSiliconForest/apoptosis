@@ -13,6 +13,14 @@ pub struct User {
 }
 
 #[derive(Clone, Debug)]
+pub struct Instance {
+    /// Instance host
+    pub host: String,
+    /// Is instance alive?
+    pub is_alive: bool,
+}
+
+#[derive(Clone, Debug)]
 pub struct Paginator {
     pub limit: i64,
     pub offset: i64,
