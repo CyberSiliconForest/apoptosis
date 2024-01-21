@@ -11,6 +11,11 @@ pub struct User {
     private_key: String,
 }
 
+pub struct Paginator {
+    limit: i64,
+    offset: i64,
+}
+
 impl User {
     //
 }
