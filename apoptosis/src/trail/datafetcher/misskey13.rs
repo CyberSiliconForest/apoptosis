@@ -46,7 +46,6 @@ pub struct Misskey13KeyPair {
     private_key: String,
 }
 
-// TODO: Test me against database with lots of local user...
 pub async fn get_active_users(
     conn: &mut AsyncPgConnection,
     paginator: &Paginator,

@@ -41,7 +41,6 @@ pub struct MastodonUsers {
     disabled: bool,
 }
 
-// TODO: Test me against database with lots of local user...
 pub async fn get_active_users(
     conn: &mut AsyncPgConnection,
     paginator: &Paginator,
@@ -68,8 +67,6 @@ pub async fn get_active_users(
             private_key: account.private_key,
         })
         .collect();
-
-    // Should I transport it to another object? hmm...
 
     Ok(results)
 }
