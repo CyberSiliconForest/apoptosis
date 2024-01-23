@@ -7,10 +7,9 @@ use diesel_async::pooled_connection::ManagerConfig;
 use diesel_async::AsyncPgConnection;
 use futures_util::FutureExt;
 
-use crate::trail::datafetcher::{mastodon, misskey13};
+use crate::trail::datafetcher::{mastodon, misskey13, Instance};
 use crate::trail::datafetcher::{Paginator, User};
 use crate::types::InstanceType;
-use crate::Command;
 
 async fn get_active_users(
     pool: &Pool<AsyncPgConnection>,
@@ -21,6 +20,18 @@ async fn get_active_users(
     Ok(match instance_type {
         InstanceType::Mastodon => mastodon::get_active_users(&mut conn, &paginator).await?,
         InstanceType::Misskey => misskey13::get_active_users(&mut conn, &paginator).await?,
+    })
+}
+
+async fn get_shared_inboxes(
+    pool: &Pool<AsyncPgConnection>,
+    instance_type: &InstanceType,
+    paginator: Paginator,
+) -> Result<Vec<Instance>, anyhow::Error> {
+    let mut conn = pool.get().await.unwrap();
+    Ok(match instance_type {
+        InstanceType::Mastodon => mastodon::get_shared_inboxes(&mut conn, &paginator).await?,
+        InstanceType::Misskey => misskey13::get_shared_inboxes(&mut conn, &paginator).await?,
     })
 }
 
@@ -58,6 +69,22 @@ pub async fn applet_main(instance_type: InstanceType, database_url: String) -> a
         }
 
         println!("{:?}", active_users);
+
+        paginator.offset += 1;
+    }
+
+    loop {
+        // Since we are dealing with offline or read-only instance, we don't need to deal with transaction
+        // because there will be no writer exists.
+        let instances = get_shared_inboxes(&pool, &instance_type, paginator.clone())
+            .await
+            .unwrap();
+
+        if instances.is_empty() {
+            break;
+        }
+
+        println!("{:?}", instances);
 
         paginator.offset += 1;
     }

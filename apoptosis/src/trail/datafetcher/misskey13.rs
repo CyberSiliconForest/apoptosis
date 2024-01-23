@@ -11,6 +11,7 @@ table! {
         username -> Text,
         isDeleted -> Bool,
         isSuspended -> Bool,
+        sharedInbox -> Nullable<Text>,
     }
 }
 
@@ -18,13 +19,6 @@ table! {
     user_keypair(userId) {
         userId -> Text,
         privateKey -> Text,
-    }
-}
-
-table! {
-    instance(id) {
-        id -> Text,
-        host -> Text,
     }
 }
 
@@ -53,13 +47,6 @@ pub struct Misskey13KeyPair {
     private_key: String,
 }
 
-#[derive(Queryable, Selectable, Debug, PartialEq)]
-#[diesel(table_name = instance)]
-pub struct Misskey13Instances {
-    #[diesel(column_name = "host")]
-    host: String,
-}
-
 pub async fn get_active_users(
     conn: &mut AsyncPgConnection,
     paginator: &Paginator,
@@ -85,22 +72,25 @@ pub async fn get_active_users(
     Ok(results)
 }
 
-pub async fn get_federated_instances(
+pub async fn get_shared_inboxes(
     conn: &mut AsyncPgConnection,
     paginator: &Paginator,
 ) -> Result<Vec<Instance>, anyhow::Error> {
-    let instances = instance::table
-        .select(Misskey13Instances::as_select())
+    let instances = user::table
+        .filter(user::sharedInbox.is_not_null())
+        .order_by(user::sharedInbox.asc())
+        .distinct_on(user::sharedInbox)
+        .select(user::sharedInbox)
         .limit(paginator.limit)
         .offset(paginator.offset)
-        .load::<Misskey13Instances>(conn)
+        .load::<Option<String>>(conn)
         .await?;
 
     let results: Vec<Instance> = instances
         .into_iter()
-        .map(|instance| Instance {
-            host: instance.host,
-            is_alive: true, // FIXME: properly query it.
+        .map(|url| Instance {
+            shared_inbox: url.unwrap(), // Queried is_not_null so 100% sure to not have None.
+            is_alive: true,             // FIXME: properly query it.
         })
         .collect();
 

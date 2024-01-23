@@ -1,3 +1,4 @@
+use crate::trail::datafetcher::mastodon::accounts::shared_inbox_url;
 use crate::trail::datafetcher::{Instance, Paginator, User};
 use diesel::prelude::*;
 use diesel_async::{AsyncConnection, AsyncPgConnection, RunQueryDsl};
@@ -10,8 +11,8 @@ diesel::table! {
         private_key -> Text,
         suspended_at -> Timestamp,
 
-        // For domain query
-        domain -> Nullable<Text>,
+        // For querying shared inbox
+        shared_inbox_url -> Text,
     }
 }
 
@@ -44,6 +45,12 @@ pub struct MastodonUsers {
     disabled: bool,
 }
 
+#[derive(Queryable, Selectable, Debug, PartialEq)]
+#[diesel(table_name = accounts)]
+pub struct MastodonInstances {
+    shared_inbox_url: String,
+}
+
 pub async fn get_active_users(
     conn: &mut AsyncPgConnection,
     paginator: &Paginator,
@@ -74,9 +81,27 @@ pub async fn get_active_users(
     Ok(results)
 }
 
-pub async fn get_federated_instances(
+pub async fn get_shared_inboxes(
     conn: &mut AsyncPgConnection,
     paginator: &Paginator,
 ) -> Result<Vec<Instance>, anyhow::Error> {
-    Ok(vec![])
+    let instances = accounts::table
+        .filter(accounts::shared_inbox_url.ne(""))
+        .order_by(accounts::shared_inbox_url.asc())
+        .distinct_on(accounts::shared_inbox_url)
+        .select(accounts::shared_inbox_url)
+        .limit(paginator.limit)
+        .offset(paginator.offset)
+        .load::<String>(conn)
+        .await?;
+
+    let results: Vec<Instance> = instances
+        .into_iter()
+        .map(|url| Instance {
+            shared_inbox: url,
+            is_alive: true, // FIXME: Read mastodon code to check how liveness check is implemented.
+        })
+        .collect();
+
+    Ok(results)
 }

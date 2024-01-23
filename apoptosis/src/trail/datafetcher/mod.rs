@@ -14,8 +14,8 @@ pub struct User {
 
 #[derive(Clone, Debug)]
 pub struct Instance {
-    /// Instance host
-    pub host: String,
+    /// Instance shared inbox
+    pub shared_inbox: String,
     /// Is instance alive?
     pub is_alive: bool,
 }
