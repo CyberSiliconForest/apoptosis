@@ -81,6 +81,7 @@ dependencies = [
  "diesel",
  "diesel-async",
  "futures-util",
+ "serde",
  "sigh 1.0.2",
  "sled",
  "tokio",
