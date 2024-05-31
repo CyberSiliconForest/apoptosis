@@ -25,5 +25,10 @@ pub async fn applet_main(
         panic!("Refuse to run. See error message.");
     }
 
+    // Load data from the file
+    // TODO: Replace it with the database
+
+    //
+
     Ok(())
 }

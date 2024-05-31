@@ -5,6 +5,7 @@ mod caspase;
 mod cytochrome;
 mod mhc;
 mod types;
+mod util;
 
 #[derive(Subcommand, Clone, Debug)]
 pub enum Command {
