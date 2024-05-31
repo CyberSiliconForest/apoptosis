@@ -3,6 +3,7 @@ use clap::{Parser, Subcommand};
 
 mod caspase;
 mod cytochrome;
+mod mhc;
 mod types;
 
 #[derive(Subcommand, Clone, Debug)]
@@ -17,10 +18,11 @@ pub enum Command {
         #[arg(long, help = "Instance base URL. e.g. https://mastodon.social/")]
         instance_base_url: String,
     },
-    Destruct {
+    Serve {
         #[arg(long, help = "Listen address")]
         listen: String,
-
+    },
+    Destruct {
         #[arg(long, help = "Request parallel per instance")]
         connection_per_instance: i32,
 
@@ -58,14 +60,15 @@ async fn main() -> anyhow::Result<()> {
         } => {
             cytochrome::applet_main(instance_type, database_url, instance_base_url).await?;
         }
+        Command::Serve { listen } => {
+            mhc::applet_main(listen).await?;
+        }
         Command::Destruct {
-            listen,
             connection_per_instance,
             thread_cnt,
             override_concurrency_limit,
         } => {
             caspase::applet_main(
-                listen,
                 connection_per_instance,
                 thread_cnt,
                 override_concurrency_limit,

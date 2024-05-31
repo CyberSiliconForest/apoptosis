@@ -3,12 +3,11 @@ use crate::Command;
 const CONCURRENCY_SOFT_LIMIT_PER_INSTANCE: i32 = 20;
 
 pub async fn applet_main(
-    listen: String,
     connection_per_instance: i32,
     thread_cnt: i32,
     override_concurrency_limit: bool,
 ) -> anyhow::Result<()> {
-    tracing::info!("Running Caspase");
+    tracing::info!("Running apoptosis::caspase applet");
 
     // Note: there should be connection_per_instance limitation to prevent
     // Unintentional DoS against Mastodon. ref: https://advisory.silicon.moe/advisory/sif-2023-001/
