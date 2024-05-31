@@ -65,7 +65,7 @@ pub async fn get_active_users(
         )
         .select((MastodonAccounts::as_select(), MastodonUsers::as_select()))
         .limit(paginator.limit)
-        .offset(paginator.offset)
+        .offset(paginator.offset * paginator.limit)
         .load::<(MastodonAccounts, MastodonUsers)>(conn)
         .await?;
 
@@ -91,7 +91,7 @@ pub async fn get_shared_inboxes(
         .distinct_on(accounts::shared_inbox_url)
         .select(accounts::shared_inbox_url)
         .limit(paginator.limit)
-        .offset(paginator.offset)
+        .offset(paginator.offset * paginator.limit)
         .load::<String>(conn)
         .await?;
 

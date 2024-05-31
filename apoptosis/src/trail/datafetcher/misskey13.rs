@@ -8,6 +8,7 @@ use futures_util::Stream;
 table! {
     user(id) {
         id -> Text,
+        host -> Nullable<Text>,
         username -> Text,
         isDeleted -> Bool,
         isSuspended -> Bool,
@@ -53,10 +54,12 @@ pub async fn get_active_users(
 ) -> Result<Vec<User>, anyhow::Error> {
     let users = user::table
         .inner_join(user_keypair::table)
+        .filter(user::host.is_null())
         .filter(user::isDeleted.eq(false))
         .select((Misskey13User::as_select(), Misskey13KeyPair::as_select()))
+        .order_by(user::id.asc())
         .limit(paginator.limit)
-        .offset(paginator.offset)
+        .offset(paginator.offset * paginator.limit)
         .load::<(Misskey13User, Misskey13KeyPair)>(conn)
         .await?;
 
@@ -82,7 +85,7 @@ pub async fn get_shared_inboxes(
         .distinct_on(user::sharedInbox)
         .select(user::sharedInbox)
         .limit(paginator.limit)
-        .offset(paginator.offset)
+        .offset(paginator.offset * paginator.limit)
         .load::<Option<String>>(conn)
         .await?;
 
