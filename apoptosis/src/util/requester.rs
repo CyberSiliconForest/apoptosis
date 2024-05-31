@@ -24,7 +24,7 @@ impl SignedRequester {
         }
     }
 
-    pub async fn get(&self, url: Url) -> Result<String, anyhow::Error> {
+    pub async fn get(&self, url: &Url) -> Result<String, anyhow::Error> {
         let host = url.host_str().unwrap();
         let signing_config = SigningConfig::new(RsaSha256, &self.private_key, &self.key_id);
         let mut req: http::Request<reqwest::Body> = http::Request::builder()
@@ -50,7 +50,7 @@ impl SignedRequester {
 
     pub async fn post(
         &self,
-        url: Url,
+        url: &Url,
         payload: serde_json::Value,
     ) -> Result<String, anyhow::Error> {
         let host = url.host_str().unwrap();
