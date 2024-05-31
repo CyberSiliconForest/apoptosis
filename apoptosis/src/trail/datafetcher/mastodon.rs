@@ -78,6 +78,8 @@ pub async fn get_active_users(
         })
         .collect();
 
+    tracing::debug!("Fetched {} users", results.len());
+
     Ok(results)
 }
 
@@ -102,6 +104,8 @@ pub async fn get_shared_inboxes(
             is_alive: true, // FIXME: Read mastodon code to check how liveness check is implemented.
         })
         .collect();
+
+    tracing::debug!("Fetched {} shared inboxes", results.len());
 
     Ok(results)
 }

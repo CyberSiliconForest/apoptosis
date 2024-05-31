@@ -72,6 +72,8 @@ pub async fn get_active_users(
         })
         .collect();
 
+    tracing::debug!("Fetched {} users", results.len());
+
     Ok(results)
 }
 
@@ -96,6 +98,8 @@ pub async fn get_shared_inboxes(
             is_alive: true,             // FIXME: properly query it.
         })
         .collect();
+
+    tracing::debug!("Fetched {} shared inboxes", results.len());
 
     Ok(results)
 }
