@@ -8,15 +8,17 @@ use url::Url;
 pub struct SignedRequester {
     private_key: PrivateKey,
     key_id: String,
+    user_agent: String,
     client: Client,
 }
 
 impl SignedRequester {
-    pub fn new(pem: &str, key_id: &str) -> Self {
+    pub fn new(pem: &str, key_id: &str, user_agent: Option<String>) -> Self {
         let private_key = PrivateKey::from_pem(pem.as_bytes()).unwrap();
         Self {
             private_key,
             key_id: key_id.to_owned(),
+            user_agent: user_agent.unwrap_or_else(|| format!("Apoptosis/{}", env!("CARGO_PKG_VERSION"))),
             client: reqwest::Client::new(),
         }
     }
@@ -35,6 +37,7 @@ impl SignedRequester {
                     .to_string(),
             )
             .header("Host", host)
+            .header("User-Agent", self.user_agent.clone())
             .body(reqwest::Body::from(""))
             .unwrap();
 
@@ -72,6 +75,7 @@ impl SignedRequester {
             .header("Host", host)
             .header("Content-Type", "application/activity+json")
             .header("Digest", format!("SHA-256={}", digest))
+            .header("User-Agent", self.user_agent.clone())
             .body(reqwest::Body::from(payload_str))
             .unwrap();
 
