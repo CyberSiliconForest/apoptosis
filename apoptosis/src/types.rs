@@ -8,6 +8,12 @@ pub enum InstanceType {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct ApPrivateKey {
+    pub pem: String,
+    pub key_id: String,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Activity {
     #[serde(rename = "@context")]
     pub context: String,
@@ -21,5 +27,5 @@ pub struct Activity {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Payload {
     pub activity: Activity,
-    pub private_key: String,
+    pub private_key: ApPrivateKey,
 }

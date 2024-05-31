@@ -1,3 +1,5 @@
+use crate::types::Payload;
+use crate::util::requester::SignedRequester;
 use crate::Command;
 
 const CONCURRENCY_SOFT_LIMIT_PER_INSTANCE: i32 = 20;
@@ -28,7 +30,17 @@ pub async fn applet_main(
     // Load data from the file
     // TODO: Replace it with the database
 
-    //
+    let payloads: Vec<Payload> =
+        serde_json::from_str(&std::fs::read_to_string("./payloads.json")?)?;
+    let inboxes: Vec<String> = serde_json::from_str(&std::fs::read_to_string("./inboxes.json")?)?;
+
+    // TODO: Parallelize the task
+
+    for inbox in inboxes {
+        for payload in &payloads {
+            //SignedRequester::new(pem, key_id, user_agent)
+        }
+    }
 
     Ok(())
 }

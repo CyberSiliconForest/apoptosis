@@ -18,7 +18,8 @@ impl SignedRequester {
         Self {
             private_key,
             key_id: key_id.to_owned(),
-            user_agent: user_agent.unwrap_or_else(|| format!("Apoptosis/{}", env!("CARGO_PKG_VERSION"))),
+            user_agent: user_agent
+                .unwrap_or_else(|| format!("Apoptosis/{}", env!("CARGO_PKG_VERSION"))),
             client: reqwest::Client::new(),
         }
     }

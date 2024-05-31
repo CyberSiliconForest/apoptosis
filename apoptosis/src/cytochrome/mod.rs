@@ -9,7 +9,7 @@ use uuid::Uuid;
 
 use crate::cytochrome::datafetcher::{mastodon, misskey13, Instance};
 use crate::cytochrome::datafetcher::{Paginator, User};
-use crate::types::{Activity, InstanceType, Payload};
+use crate::types::{Activity, ApPrivateKey, InstanceType, Payload};
 
 async fn get_active_users(
     pool: &Pool<AsyncPgConnection>,
@@ -87,12 +87,15 @@ pub async fn applet_main(
                 id: format!("{}/{}", instance_base_url, Uuid::new_v4()),
                 activity_type: "Delete".into(),
                 actor: actor.clone(),
-                object: actor,
+                object: actor.clone(),
             };
 
             Payload {
                 activity,
-                private_key: user.private_key,
+                private_key: ApPrivateKey {
+                    pem: user.private_key,
+                    key_id: format!("{}#main-key", actor),
+                },
             }
         }));
 
