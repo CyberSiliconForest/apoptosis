@@ -7,8 +7,8 @@ use diesel_async::pooled_connection::ManagerConfig;
 use diesel_async::AsyncPgConnection;
 use uuid::Uuid;
 
-use crate::trail::datafetcher::{mastodon, misskey13, Instance};
-use crate::trail::datafetcher::{Paginator, User};
+use crate::cytochrome::datafetcher::{mastodon, misskey13, Instance};
+use crate::cytochrome::datafetcher::{Paginator, User};
 use crate::types::{Activity, InstanceType, Payload};
 
 async fn get_active_users(
@@ -40,7 +40,7 @@ pub async fn applet_main(
     database_url: String,
     instance_base_url: String,
 ) -> anyhow::Result<()> {
-    tracing::info!("Running TRAIL");
+    tracing::info!("Running apoptosis::cytochrome applet.");
 
     let config = ManagerConfig::default();
 

@@ -1,4 +1,4 @@
-use crate::trail::datafetcher::{Instance, Paginator, User};
+use crate::cytochrome::datafetcher::{Instance, Paginator, User};
 use diesel::prelude::*;
 use diesel_async::pooled_connection::bb8::{Pool, PooledConnection};
 use diesel_async::pooled_connection::AsyncDieselConnectionManager;

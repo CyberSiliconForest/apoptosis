@@ -2,7 +2,7 @@ use crate::types::InstanceType;
 use clap::{Parser, Subcommand};
 
 mod caspase;
-mod trail;
+mod cytochrome;
 mod types;
 
 #[derive(Subcommand, Clone, Debug)]
@@ -56,7 +56,7 @@ async fn main() -> anyhow::Result<()> {
             database_url,
             instance_base_url,
         } => {
-            trail::applet_main(instance_type, database_url, instance_base_url).await?;
+            cytochrome::applet_main(instance_type, database_url, instance_base_url).await?;
         }
         Command::Destruct {
             listen,

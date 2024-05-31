@@ -12,7 +12,7 @@ pub async fn applet_main(
 
     // Note: there should be connection_per_instance limitation to prevent
     // Unintentional DoS against Mastodon. ref: https://advisory.silicon.moe/advisory/sif-2023-001/
-    // Although apoptosis::caspase will reply 410 as fast as it can, but we are living in the world
+    // Although apoptosis::mhc will reply 410 as fast as it can, but we are living in the world
     // without FTL communication...
     if connection_per_instance > CONCURRENCY_SOFT_LIMIT_PER_INSTANCE && !override_concurrency_limit
     {

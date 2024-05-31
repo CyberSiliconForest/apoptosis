@@ -1,5 +1,5 @@
-use crate::trail::datafetcher::mastodon::accounts::shared_inbox_url;
-use crate::trail::datafetcher::{Instance, Paginator, User};
+use crate::cytochrome::datafetcher::mastodon::accounts::shared_inbox_url;
+use crate::cytochrome::datafetcher::{Instance, Paginator, User};
 use diesel::prelude::*;
 use diesel_async::{AsyncConnection, AsyncPgConnection, RunQueryDsl};
 
