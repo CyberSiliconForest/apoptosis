@@ -45,7 +45,7 @@ async fn main() -> anyhow::Result<()> {
 
     let args = Args::parse();
 
-    tracing::info!("Apotosis initialized.");
+    tracing::info!("Apoptosis initialized.");
 
     match args.command {
         Command::Convert {
