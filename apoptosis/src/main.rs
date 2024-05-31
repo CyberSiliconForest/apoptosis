@@ -13,6 +13,9 @@ pub enum Command {
 
         #[arg(long, help = "Database URL to run Apoptosis on")]
         database_url: String,
+
+        #[arg(long, help = "Instance base URL. e.g. https://mastodon.social/")]
+        instance_base_url: String,
     },
     Destruct {
         #[arg(long, help = "Listen address")]
@@ -51,8 +54,9 @@ async fn main() -> anyhow::Result<()> {
         Command::Convert {
             instance_type,
             database_url,
+            instance_base_url,
         } => {
-            trail::applet_main(instance_type, database_url).await?;
+            trail::applet_main(instance_type, database_url, instance_base_url).await?;
         }
         Command::Destruct {
             listen,

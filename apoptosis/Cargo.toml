@@ -18,3 +18,5 @@ diesel = { version = "^2.1.4", features = ["postgres_backend"] }
 diesel-async = { version = "^0.4.1", features = ["bb8", "postgres"] }
 futures-util = "^0.3.30"
 serde = { version = "1.0.195", features = ["derive"] }
+uuid = { version = "1.8.0", features = ["v4"]}
+serde_json = { version = "1.0" }

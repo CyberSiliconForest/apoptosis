@@ -5,11 +5,11 @@ use diesel_async::pooled_connection::bb8::{Pool, PooledConnection};
 use diesel_async::pooled_connection::AsyncDieselConnectionManager;
 use diesel_async::pooled_connection::ManagerConfig;
 use diesel_async::AsyncPgConnection;
-use futures_util::FutureExt;
+use uuid::Uuid;
 
 use crate::trail::datafetcher::{mastodon, misskey13, Instance};
 use crate::trail::datafetcher::{Paginator, User};
-use crate::types::InstanceType;
+use crate::types::{Activity, InstanceType, Payload};
 
 async fn get_active_users(
     pool: &Pool<AsyncPgConnection>,
@@ -35,7 +35,11 @@ async fn get_shared_inboxes(
     })
 }
 
-pub async fn applet_main(instance_type: InstanceType, database_url: String) -> anyhow::Result<()> {
+pub async fn applet_main(
+    instance_type: InstanceType,
+    database_url: String,
+    instance_base_url: String,
+) -> anyhow::Result<()> {
     tracing::info!("Running TRAIL");
 
     let config = ManagerConfig::default();
@@ -57,6 +61,12 @@ pub async fn applet_main(instance_type: InstanceType, database_url: String) -> a
         offset: 0,
     };
 
+    let mut user_cnt: usize = 0;
+    let mut inbox_cnt: usize = 0;
+
+    let mut payloads: Vec<Payload> = Vec::new();
+    let mut inboxes: Vec<String> = Vec::new();
+
     loop {
         // Since we are dealing with offline or read-only instance, we don't need to deal with transaction
         // because there will be no writer exists.
@@ -68,10 +78,27 @@ pub async fn applet_main(instance_type: InstanceType, database_url: String) -> a
             break;
         }
 
-        println!("{:?}", active_users);
+        // process active_users
+        user_cnt += active_users.len();
+        payloads.extend(active_users.into_iter().map(|user| {
+            let actor = format!("{}/users/{}", instance_base_url, user.id);
+            let activity = Activity {
+                context: "https://www.w3.org/ns/activitystreams".into(),
+                id: format!("{}/{}", instance_base_url, Uuid::new_v4()),
+                activity_type: "Delete".into(),
+                actor: actor.clone(),
+                object: actor,
+            };
+
+            Payload {
+                activity,
+                private_key: user.private_key,
+            }
+        }));
 
         paginator.offset += 1;
     }
+    tracing::info!("Total users: {}", user_cnt);
 
     loop {
         // Since we are dealing with offline or read-only instance, we don't need to deal with transaction
@@ -84,10 +111,26 @@ pub async fn applet_main(instance_type: InstanceType, database_url: String) -> a
             break;
         }
 
-        println!("{:?}", instances);
+        inbox_cnt += instances.len();
+        inboxes.extend(
+            instances
+                .into_iter()
+                .filter(|instance| instance.is_alive)
+                .map(|instance| instance.shared_inbox),
+        );
 
         paginator.offset += 1;
     }
+
+    tracing::info!("Total shared inboxes: {}", inbox_cnt);
+
+    // Now we have all the payloads and inboxes, we can start to send the payloads to the inboxes.
+    // For now, just print it out.
+    tracing::info!("Payloads: {:?}", payloads);
+    tracing::info!("Inboxes: {:?}", inboxes);
+
+    std::fs::write("./payloads.json", serde_json::to_string(&payloads).unwrap()).unwrap();
+    std::fs::write("./inboxes.json", serde_json::to_string(&inboxes).unwrap()).unwrap();
 
     Ok(())
 }
